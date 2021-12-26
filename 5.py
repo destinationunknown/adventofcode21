@@ -17,6 +17,7 @@ def part_one():
     count = 0
 
     for line in lines:
+        # since the lines are either vertical or horizontal we can just sort the coordinates individually
         y_coords = sorted((line[0][1], line[1][1]))
         x_coords = sorted((line[0][0], line[1][0]))
 
