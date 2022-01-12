@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import itertools
-from typing import List
-import queue
 from collections import deque
 
 data = open('11.txt', 'r').read().strip().split('\n')
