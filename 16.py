@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from functools import reduce
+from operator import mul
 
 data = open('16.txt', 'r').read().strip()
 
@@ -24,6 +26,9 @@ class Packet:
     num_subpackets: int
     len_subpackets: int
     subpackets: list
+
+    def __init__(self):
+        self.subpackets = []
 
     # Initialize a packet from a bit string
     def parse(self, bit_string: str, start: int) -> int:
@@ -87,6 +92,34 @@ class Packet:
 
         return curr
 
+
+    def eval(self):
+        subpacket_values = [x.eval() for x in self.subpackets]
+        if self.type_id == 0:
+            # sum packet
+            return sum(subpacket_values)
+        elif self.type_id == 1:
+            return reduce(mul, subpacket_values, 1)
+        elif self.type_id == 2:
+            return min(subpacket_values)
+        elif self.type_id == 3:
+            return max(subpacket_values)
+        elif self.type_id == 4:
+            return self.value
+        elif self.type_id == 5:
+            return int(
+                subpacket_values[0] > subpacket_values[1]
+            )
+        elif self.type_id == 6:
+            return int(
+                subpacket_values[0] < subpacket_values[1]
+            )
+        elif self.type_id == 7:
+            return int(
+                subpacket_values[0] == subpacket_values[1]
+            )
+
+
 def get_bit_string(data: str) -> str:
     bits = ''
     for x in data:
@@ -94,10 +127,33 @@ def get_bit_string(data: str) -> str:
     return bits
 
 def part_one(data):
+    # sum up version numbers of every packet while constructing the packet heirarchy
     bit_string = get_bit_string(data)
     root = Packet()
     root.parse(bit_string, start=0)
     return version_sum
 
+def part_two(data):
+    bit_string = get_bit_string(data)
+    root = Packet()
+    root.parse(bit_string, start=0)
+    return root.eval()
 
-print(part_one(data))
+# print(part_one(data))
+print(part_two(data))
+
+def test_part_two():
+    test_cases = [
+        ("C200B40A82", 3),
+        ("04005AC33890", 54),
+        ("880086C3E88112", 7),
+        ("CE00C43D881120", 9),
+        ("D8005AC2A8F0", 1),
+        ("F600BC2D8F", 0),
+        ("9C005AC2F8F0", 0),
+        ("9C0141080250320F1802104A08", 1)
+
+    ]
+
+    for data, expected_value in test_cases:
+        assert part_two(data) == expected_value
