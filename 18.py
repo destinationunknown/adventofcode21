@@ -192,7 +192,16 @@ def part_one(data) -> int:
 
 
 def part_two(data) -> int:
-    ...
+    max_magnitude = 0
+    for a, b in permutations(data, 2):
+        a = make_tree(a)
+        b = make_tree(b)
+
+        c = add(a, b)
+        reduce(c)
+        max_magnitude = max(max_magnitude, magnitude(c))
+
+    return max_magnitude
 
 
 
